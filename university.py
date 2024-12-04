@@ -37,10 +37,6 @@ class Faculty:
     def add_specialization(self, specialization: "Specialization"):
         self.specializations.append(specialization)
 
-    def delete_specialization(self, specialization: "Specialization"):
-        if specialization in self.specializations:
-            self.specializations.remove(specialization)
-
     def list_specializations(self):
         return self.specializations
 
@@ -53,29 +49,7 @@ class Specialization:
         self.teachers = []
         self.card_number = None
         self.card_expiry = None
-        self.card_cvv = None    
-
-    def add_student(self, student: "Student"):
-        self.students.append(student)
-        student.specialization = self
-
-    def delete_student(self, student: "Student"):
-        if student in self.students:
-            self.students.remove(student)
-            student.specialization = None
-
-    def add_teacher(self, teacher: "Teacher"):
-        self.teachers.append(teacher)
-
-    def delete_teacher(self, teacher: "Teacher"):
-        if teacher in self.teachers:
-            self.teachers.remove(teacher)
-
-    def list_students(self):
-        return self.students
-
-    def list_teachers(self):
-        return self.teachers
+        self.card_cvv = None 
 
 
 class Person:
@@ -89,19 +63,6 @@ class Person:
         self.card_number = None
         self.card_expiry = None
         self.card_cvv = None
-
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-    def set_birth_date(self, date: str):
-        self.birth_date = date
-        
-    def get_age(self) -> int:
-        if not self.birth_date:
-            return None
-        from datetime import datetime
-        birth = datetime.strptime(self.birth_date, "%Y-%m-%d")
-        today = datetime.now()
-        return today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
     
     def to_dict(self) -> dict:
         return {
@@ -110,7 +71,6 @@ class Person:
             "email": self.email,
             "phone": self.phone,
             "address": self.address,
-            "birth_date": self.birth_date
         }
 
     def set_payment_details(self, card_number: str, expiry: str, cvv: str):
@@ -159,15 +119,7 @@ class Student(Person):
         super().__init__(first_name, last_name, email)
         self.specialization = None
 
-    def choose_specialization(self, specialization: Specialization):
-        if self.specialization:
-            self.specialization.delete_student(self)
-        specialization.add_student(self)
-
-
 class Teacher(Person):
     def __init__(self, first_name: str, last_name: str, email: str):
         super().__init__(first_name, last_name, email)
-
-    def assign_to_specialization(self, specialization: Specialization):
-        specialization.add_teacher(self)
+        self.specialization = None
